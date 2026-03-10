@@ -138,13 +138,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean checkIfPermissionGranted() {
-        if (!CodeUtil.checkIfPermissionAccessStorageGranted(C)) {
-            showPermissionError();
-            return false;
-        } else if (!CodeUtil.checkIfPermissionAccessStorageManagerGranted()) {
-            showPermissionManagerError();
-            return false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!CodeUtil.checkIfPermissionAccessStorageManagerGranted()) {
+                if (!CodeUtil.checkIfPermissionAccessStorageGranted(C)) {
+                    showPermissionError();
+                    return false;
+                }
+            }
+        } else {
+            if (!CodeUtil.checkIfPermissionAccessStorageGranted(C)) {
+                showPermissionError();
+                return false;
+            }
         }
+    
         final int NOTIFICATION_PERMISSION_REQUEST_CODE = 123;
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED) {
